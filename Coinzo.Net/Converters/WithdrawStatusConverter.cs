@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Coinzo.Net.Converters
 {
-    internal class WithdrawStatusConverter : BaseConverter<CoinzoWithdrawStatus>
+    public class WithdrawStatusConverter : BaseConverter<CoinzoWithdrawStatus>
     {
         public WithdrawStatusConverter() : this(true) { }
         public WithdrawStatusConverter(bool quotes) : base(quotes) { }

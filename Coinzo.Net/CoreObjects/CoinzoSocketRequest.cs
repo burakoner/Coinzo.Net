@@ -2,7 +2,7 @@
 
 namespace Coinzo.Net.CoreObjects
 {
-    internal class CoinzoSocketRequest
+    public class CoinzoSocketRequest
     {
         [JsonProperty("event")]
         public string Event { get; set; }

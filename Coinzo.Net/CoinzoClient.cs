@@ -21,26 +21,26 @@ namespace Coinzo.Net
     public class CoinzoClient : RestClient, IRestClient, ICoinzoClient
     {
         #region Fields
-        private static CoinzoClientOptions defaultOptions = new CoinzoClientOptions();
-        private static CoinzoClientOptions DefaultOptions => defaultOptions.Copy();
+        protected static CoinzoClientOptions defaultOptions = new CoinzoClientOptions();
+        protected static CoinzoClientOptions DefaultOptions => defaultOptions.Copy();
 
         // V1 Endpoints
-        private const string Endpoints_Public_Ticker = "ticker";
-        private const string Endpoints_Public_OrderBook = "order-book";
-        private const string Endpoints_Public_Trades = "trades";
+        protected const string Endpoints_Public_Ticker = "ticker";
+        protected const string Endpoints_Public_OrderBook = "order-book";
+        protected const string Endpoints_Public_Trades = "trades";
 
-        private const string Endpoints_Private_Usage = "usage";
-        private const string Endpoints_Private_Balances = "balances";
-        private const string Endpoints_Private_PlaceOrder = "order/new";
-        private const string Endpoints_Private_OrderStatus = "order";
-        private const string Endpoints_Private_CancelOrder = "order";
-        private const string Endpoints_Private_CancelAllOrders = "orders";
-        private const string Endpoints_Private_ListOrders = "orders";
-        private const string Endpoints_Private_Fills = "fills";
-        private const string Endpoints_Private_DepositAddress = "deposit/address";
-        private const string Endpoints_Private_DepositList = "deposit/list";
-        private const string Endpoints_Private_Withdraw = "withdraw";
-        private const string Endpoints_Private_WithdrawList = "withdraw/list";
+        protected const string Endpoints_Private_Usage = "usage";
+        protected const string Endpoints_Private_Balances = "balances";
+        protected const string Endpoints_Private_PlaceOrder = "order/new";
+        protected const string Endpoints_Private_OrderStatus = "order";
+        protected const string Endpoints_Private_CancelOrder = "order";
+        protected const string Endpoints_Private_CancelAllOrders = "orders";
+        protected const string Endpoints_Private_ListOrders = "orders";
+        protected const string Endpoints_Private_Fills = "fills";
+        protected const string Endpoints_Private_DepositAddress = "deposit/address";
+        protected const string Endpoints_Private_DepositList = "deposit/list";
+        protected const string Endpoints_Private_Withdraw = "withdraw";
+        protected const string Endpoints_Private_WithdrawList = "withdraw/list";
         #endregion
 
         #region Constructor / Destructor
@@ -77,7 +77,7 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="apiKey">The api key</param>
         /// <param name="apiSecret">The api secret</param>
-        public void SetApiCredentials(string apiKey, string apiSecret)
+        public virtual void SetApiCredentials(string apiKey, string apiSecret)
         {
             SetAuthenticationProvider(new CoinzoAuthenticationProvider(new ApiCredentials(apiKey, apiSecret)));
         }
@@ -91,14 +91,14 @@ namespace Coinzo.Net
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoTicker> GetTickers(string pair, CancellationToken ct = default) => GetTickersAsync(pair, ct).Result;
+        public virtual WebCallResult<CoinzoTicker> GetTickers(string pair, CancellationToken ct = default) => GetTickersAsync(pair, ct).Result;
         /// <summary>
         /// Snapshot information about the last trade (tick), 24h low, high price and volume.
         /// </summary>
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoTicker>> GetTickersAsync(string pair, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoTicker>> GetTickersAsync(string pair, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -113,14 +113,14 @@ namespace Coinzo.Net
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoOrderBook> GetOrderBook(string pair, CancellationToken ct = default) => GetOrderBookAsync(pair, ct).Result;
+        public virtual WebCallResult<CoinzoOrderBook> GetOrderBook(string pair, CancellationToken ct = default) => GetOrderBookAsync(pair, ct).Result;
         /// <summary>
         /// Get a list of open orders for a pair
         /// </summary>
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoOrderBook>> GetOrderBookAsync(string pair, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoOrderBook>> GetOrderBookAsync(string pair, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -135,14 +135,14 @@ namespace Coinzo.Net
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoTrade>> GetTrades(string pair, CancellationToken ct = default) => GetTradesAsync(pair, ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoTrade>> GetTrades(string pair, CancellationToken ct = default) => GetTradesAsync(pair, ct).Result;
         /// <summary>
         /// List the latest trades for a pair
         /// </summary>
         /// <param name="pair">A valid pair</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoTrade>>> GetTradesAsync(string pair, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoTrade>>> GetTradesAsync(string pair, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -156,13 +156,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoUsage> GetUsage(CancellationToken ct = default) => GetUsageAsync(ct).Result;
+        public virtual WebCallResult<CoinzoUsage> GetUsage(CancellationToken ct = default) => GetUsageAsync(ct).Result;
         /// <summary>
         /// Get account fee, liquidity usage and volume info
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoUsage>> GetUsageAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoUsage>> GetUsageAsync(CancellationToken ct = default)
         {
             return await SendRequest<CoinzoUsage>(GetUrl(Endpoints_Private_Usage), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -172,13 +172,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoBalance>> GetBalances(CancellationToken ct = default) => GetBalancesAsync(ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoBalance>> GetBalances(CancellationToken ct = default) => GetBalancesAsync(ct).Result;
         /// <summary>
         /// Get account balances
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoBalance>>> GetBalancesAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoBalance>>> GetBalancesAsync(CancellationToken ct = default)
         {
             return await SendRequest<IEnumerable<CoinzoBalance>>(GetUrl(Endpoints_Private_Balances), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -194,7 +194,7 @@ namespace Coinzo.Net
         /// <param name="stopPrice">[Optinal] Stop price for stop and stop limit orders</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoOrderId> PlaceOrder(string pair, decimal amount, CoinzoOrderSide side, CoinzoOrderType type, decimal? limitPrice = null, decimal? stopPrice = null, CancellationToken ct = default) => PlaceOrderAsync(pair, amount, side, type, limitPrice, stopPrice, ct).Result;
+        public virtual WebCallResult<CoinzoOrderId> PlaceOrder(string pair, decimal amount, CoinzoOrderSide side, CoinzoOrderType type, decimal? limitPrice = null, decimal? stopPrice = null, CancellationToken ct = default) => PlaceOrderAsync(pair, amount, side, type, limitPrice, stopPrice, ct).Result;
         /// <summary>
         /// Submit a new order
         /// </summary>
@@ -206,7 +206,7 @@ namespace Coinzo.Net
         /// <param name="stopPrice">[Optinal] Stop price for stop and stop limit orders</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoOrderId>> PlaceOrderAsync(string pair, decimal amount, CoinzoOrderSide side, CoinzoOrderType type, decimal? limitPrice = null, decimal? stopPrice = null, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoOrderId>> PlaceOrderAsync(string pair, decimal amount, CoinzoOrderSide side, CoinzoOrderType type, decimal? limitPrice = null, decimal? stopPrice = null, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -227,14 +227,14 @@ namespace Coinzo.Net
         /// <param name="id">The ID of order to get status</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoOrder> GetOrderStatus(long id, CancellationToken ct = default) => GetOrderStatusAsync(id, ct).Result;
+        public virtual WebCallResult<CoinzoOrder> GetOrderStatus(long id, CancellationToken ct = default) => GetOrderStatusAsync(id, ct).Result;
         /// <summary>
         /// Get status of order
         /// </summary>
         /// <param name="id">The ID of order to get status</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoOrder>> GetOrderStatusAsync(long id, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoOrder>> GetOrderStatusAsync(long id, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -249,14 +249,14 @@ namespace Coinzo.Net
         /// <param name="id">The ID of the order to delete</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoOrderId> CancelOrder(long id, CancellationToken ct = default) => CancelOrderAsync(id, ct).Result;
+        public virtual WebCallResult<CoinzoOrderId> CancelOrder(long id, CancellationToken ct = default) => CancelOrderAsync(id, ct).Result;
         /// <summary>
         /// Cancel a previously placed order
         /// </summary>
         /// <param name="id">The ID of the order to delete</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoOrderId>> CancelOrderAsync(long id, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoOrderId>> CancelOrderAsync(long id, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -270,13 +270,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoOrderId> CancelAllOrders(CancellationToken ct = default) => CancelAllOrdersAsync(ct).Result;
+        public virtual WebCallResult<CoinzoOrderId> CancelAllOrders(CancellationToken ct = default) => CancelAllOrdersAsync(ct).Result;
         /// <summary>
         /// Cancel all open orders
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoOrderId>> CancelAllOrdersAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoOrderId>> CancelAllOrdersAsync(CancellationToken ct = default)
         {
             return await SendRequest<CoinzoOrderId>(GetUrl(Endpoints_Private_CancelAllOrders), method: HttpMethod.Delete, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -286,13 +286,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoOrder>> GetOrders(CancellationToken ct = default) => GetOrdersAsync(ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoOrder>> GetOrders(CancellationToken ct = default) => GetOrdersAsync(ct).Result;
         /// <summary>
         /// List your current open orders. Only open or un-settled orders are returned. As soon as an order is no longer open and settled, it will no longer appear in the default request.
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoOrder>>> GetOrdersAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoOrder>>> GetOrdersAsync(CancellationToken ct = default)
         {
             return await SendRequest<IEnumerable<CoinzoOrder>>(GetUrl(Endpoints_Private_ListOrders), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -302,13 +302,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoFill>> GetFills(CancellationToken ct = default) => GetFillsAsync(ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoFill>> GetFills(CancellationToken ct = default) => GetFillsAsync(ct).Result;
         /// <summary>
         /// Get a list of recent fills.
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoFill>>> GetFillsAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoFill>>> GetFillsAsync(CancellationToken ct = default)
         {
             return await SendRequest<IEnumerable<CoinzoFill>>(GetUrl(Endpoints_Private_Fills), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -319,14 +319,14 @@ namespace Coinzo.Net
         /// <param name="asset">A valid asset</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoDepositAddress> GetDepositAddress(string asset, CancellationToken ct = default) => GetDepositAddressAsync(asset, ct).Result;
+        public virtual WebCallResult<CoinzoDepositAddress> GetDepositAddress(string asset, CancellationToken ct = default) => GetDepositAddressAsync(asset, ct).Result;
         /// <summary>
         /// Show deposit address for asset
         /// </summary>
         /// <param name="asset">A valid asset</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoDepositAddress>> GetDepositAddressAsync(string asset, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoDepositAddress>> GetDepositAddressAsync(string asset, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -340,13 +340,13 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoDeposit>> GetDepositHistory(CancellationToken ct = default) => GetDepositHistoryAsync(ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoDeposit>> GetDepositHistory(CancellationToken ct = default) => GetDepositHistoryAsync(ct).Result;
         /// <summary>
         /// List your deposit history
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoDeposit>>> GetDepositHistoryAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoDeposit>>> GetDepositHistoryAsync(CancellationToken ct = default)
         {
             return await SendRequest<IEnumerable<CoinzoDeposit>>(GetUrl(Endpoints_Private_DepositList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
@@ -361,7 +361,7 @@ namespace Coinzo.Net
         /// <param name="memo">[Optional] Memo for EOS withdraws</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<CoinzoWithdraw> Withdraw(string asset, string address, decimal amount, string tag = null, string memo = null, CancellationToken ct = default) => WithdrawAsync(asset, address, amount, tag, memo, ct).Result;
+        public virtual WebCallResult<CoinzoWithdraw> Withdraw(string asset, string address, decimal amount, string tag = null, string memo = null, CancellationToken ct = default) => WithdrawAsync(asset, address, amount, tag, memo, ct).Result;
         /// <summary>
         /// Withdraws funds to a crypto address.
         /// </summary>
@@ -372,7 +372,7 @@ namespace Coinzo.Net
         /// <param name="memo">[Optional] Memo for EOS withdraws</param>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<CoinzoWithdraw>> WithdrawAsync(string asset, string address, decimal amount, string tag = null, string memo = null, CancellationToken ct = default)
+        public virtual async Task<WebCallResult<CoinzoWithdraw>> WithdrawAsync(string asset, string address, decimal amount, string tag = null, string memo = null, CancellationToken ct = default)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -391,22 +391,24 @@ namespace Coinzo.Net
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public WebCallResult<IEnumerable<CoinzoWithdrawal>> GetWithdrawHistory(CancellationToken ct = default) => GetWithdrawHistoryAsync(ct).Result;
+        public virtual WebCallResult<IEnumerable<CoinzoWithdrawal>> GetWithdrawHistory(CancellationToken ct = default) => GetWithdrawHistoryAsync(ct).Result;
         /// <summary>
         /// List your withdraw history
         /// </summary>
         /// <param name="ct">Cancellation Token</param>
         /// <returns></returns>
-        public async Task<WebCallResult<IEnumerable<CoinzoWithdrawal>>> GetWithdrawHistoryAsync(CancellationToken ct = default)
+        public virtual async Task<WebCallResult<IEnumerable<CoinzoWithdrawal>>> GetWithdrawHistoryAsync(CancellationToken ct = default)
         {
             return await SendRequest<IEnumerable<CoinzoWithdrawal>>(GetUrl(Endpoints_Private_WithdrawList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
-
         #endregion
 
         #region Protected Methods
-
         protected override Error ParseErrorResponse(JToken error)
+        {
+            return this.CoinzoParseErrorResponse(error);
+        }
+        protected virtual Error CoinzoParseErrorResponse(JToken error)
         {
             if (error["error"] == null)
                 return new ServerError(error.ToString());
@@ -418,11 +420,10 @@ namespace Coinzo.Net
             return new ServerError(err);
         }
 
-        protected Uri GetUrl(string endpoint)
+        protected virtual Uri GetUrl(string endpoint)
         {
             return new Uri($"{BaseAddress.TrimEnd('/')}/{endpoint}");
         }
-
         #endregion
 
     }

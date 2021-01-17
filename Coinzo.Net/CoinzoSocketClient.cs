@@ -21,11 +21,11 @@ namespace Coinzo.Net
     /// </summary>
     public partial class CoinzoSocketClient : SocketClient, ISocketClient, ICoinzoSocketClient
     {
-        private SortedDictionary<string, string> SubscriptionChannels = new SortedDictionary<string, string>();
+        protected SortedDictionary<string, string> SubscriptionChannels = new SortedDictionary<string, string>();
 
         #region Client Options
-        private static CoinzoSocketClientOptions defaultOptions = new CoinzoSocketClientOptions();
-        private static CoinzoSocketClientOptions DefaultOptions => defaultOptions.Copy();
+        protected static CoinzoSocketClientOptions defaultOptions = new CoinzoSocketClientOptions();
+        protected static CoinzoSocketClientOptions DefaultOptions => defaultOptions.Copy();
         #endregion
 
         #region Constructor/Destructor
@@ -57,8 +57,8 @@ namespace Coinzo.Net
         #endregion
 
         #region Web Socket Feeds
-        public CallResult<UpdateSubscription> SubscribeToTrades(string pair, Action<CoinzoSocketTrade> onData) => SubscribeToTradesAsync(pair, onData).Result;
-        public async Task<CallResult<UpdateSubscription>> SubscribeToTradesAsync(string pair, Action<CoinzoSocketTrade> onData)
+        public virtual CallResult<UpdateSubscription> SubscribeToTrades(string pair, Action<CoinzoSocketTrade> onData) => SubscribeToTradesAsync(pair, onData).Result;
+        public virtual async Task<CallResult<UpdateSubscription>> SubscribeToTradesAsync(string pair, Action<CoinzoSocketTrade> onData)
         {
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-trades-{pair}";
@@ -83,8 +83,8 @@ namespace Coinzo.Net
             return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
-        public CallResult<UpdateSubscription> SubscribeToTicker(string pair, Action<CoinzoSocketTicker> onData) => SubscribeToTickerAsync(pair, onData).Result;
-        public async Task<CallResult<UpdateSubscription>> SubscribeToTickerAsync(string pair, Action<CoinzoSocketTicker> onData)
+        public virtual CallResult<UpdateSubscription> SubscribeToTicker(string pair, Action<CoinzoSocketTicker> onData) => SubscribeToTickerAsync(pair, onData).Result;
+        public virtual async Task<CallResult<UpdateSubscription>> SubscribeToTickerAsync(string pair, Action<CoinzoSocketTicker> onData)
         {
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-ticker-{pair}";
@@ -110,8 +110,8 @@ namespace Coinzo.Net
             return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
-        public CallResult<UpdateSubscription> SubscribeToCandles(string pair, CoinzoPeriod period, Action<CoinzoSocketCandle> onData) => SubscribeToCandlesAsync(pair, period, onData).Result;
-        public async Task<CallResult<UpdateSubscription>> SubscribeToCandlesAsync(string pair, CoinzoPeriod period, Action<CoinzoSocketCandle> onData)
+        public virtual CallResult<UpdateSubscription> SubscribeToCandles(string pair, CoinzoPeriod period, Action<CoinzoSocketCandle> onData) => SubscribeToCandlesAsync(pair, period, onData).Result;
+        public virtual async Task<CallResult<UpdateSubscription>> SubscribeToCandlesAsync(string pair, CoinzoPeriod period, Action<CoinzoSocketCandle> onData)
         {
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-candles-{pair}";
@@ -141,8 +141,8 @@ namespace Coinzo.Net
             return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
-        public CallResult<UpdateSubscription> SubscribeToOrderBook(string pair, Action<CoinzoSocketOrderBookTotal> onTotalData, Action<CoinzoSocketOrderBookEntry> onEntryData) => SubscribeToOrderBookAsync(pair, onTotalData, onEntryData).Result;
-        public async Task<CallResult<UpdateSubscription>> SubscribeToOrderBookAsync(string pair, Action<CoinzoSocketOrderBookTotal> onTotalData, Action<CoinzoSocketOrderBookEntry> onEntryData)
+        public virtual CallResult<UpdateSubscription> SubscribeToOrderBook(string pair, Action<CoinzoSocketOrderBookTotal> onTotalData, Action<CoinzoSocketOrderBookEntry> onEntryData) => SubscribeToOrderBookAsync(pair, onTotalData, onEntryData).Result;
+        public virtual async Task<CallResult<UpdateSubscription>> SubscribeToOrderBookAsync(string pair, Action<CoinzoSocketOrderBookTotal> onTotalData, Action<CoinzoSocketOrderBookEntry> onEntryData)
         {
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-book-{pair}";
@@ -178,13 +178,27 @@ namespace Coinzo.Net
         #endregion
 
         #region Core Methods
+        protected int iterator = 0;
+        protected virtual int NextSubscriptionId()
+        {
+            return ++iterator;
+        }
+
         protected override bool HandleQueryResponse<T>(SocketConnection s, object request, JToken data, out CallResult<T> callResult)
+        {
+            return this.CoinzoHandleQueryResponse<T>(s, request, data, out callResult);
+        }
+        protected virtual bool CoinzoHandleQueryResponse<T>(SocketConnection s, object request, JToken data, out CallResult<T> callResult)
         {
             callResult = new CallResult<T>(default, null);
             return false;
         }
 
         protected override bool HandleSubscriptionResponse(SocketConnection s, SocketSubscription subscription, object request, JToken message, out CallResult<object> callResult)
+        {
+            return this.CoinzoHandleSubscriptionResponse(s, subscription, request, message, out callResult);
+        }
+        protected virtual bool CoinzoHandleSubscriptionResponse(SocketConnection s, SocketSubscription subscription, object request, JToken message, out CallResult<object> callResult)
         {
             callResult = null;
 
@@ -221,6 +235,10 @@ namespace Coinzo.Net
 
         protected override bool MessageMatchesHandler(JToken data, object request)
         {
+            return this.CoinzoMessageMatchesHandler(data, request);
+        }
+        protected virtual bool CoinzoMessageMatchesHandler(JToken data, object request)
+        {
             if (request is CoinzoSocketRequest socRequest)
             {
                 if (socRequest.Event == "subscribe")
@@ -241,10 +259,18 @@ namespace Coinzo.Net
 
         protected override bool MessageMatchesHandler(JToken message, string identifier)
         {
+            return this.CoinzoMessageMatchesHandler(message, identifier);
+        }
+        protected virtual bool CoinzoMessageMatchesHandler(JToken message, string identifier)
+        {
             return true;
         }
 
         protected override SocketConnection GetWebsocket(string address, bool authenticated)
+        {
+            return this.CoinzoGetWebsocket(address, authenticated);
+        }
+        protected virtual SocketConnection CoinzoGetWebsocket(string address, bool authenticated)
         {
             address = address.TrimEnd('/');
             var socketResult = sockets.Where(s =>
@@ -275,6 +301,10 @@ namespace Coinzo.Net
 
         protected override async Task<bool> Unsubscribe(SocketConnection connection, SocketSubscription s)
         {
+            return await this.CoinzoUnsubscribe(connection, s);
+        }
+        protected virtual async Task<bool> CoinzoUnsubscribe(SocketConnection connection, SocketSubscription s)
+        {
             if (s == null || s.Request == null)
                 return false;
 
@@ -300,13 +330,11 @@ namespace Coinzo.Net
 
         protected override Task<CallResult<bool>> AuthenticateSocket(SocketConnection s)
         {
-            throw new NotImplementedException();
+            return this.CoinzoAuthenticateSocket(s);
         }
-
-        private int iterator = 0;
-        private int NextSubscriptionId()
+        protected virtual Task<CallResult<bool>> CoinzoAuthenticateSocket(SocketConnection s)
         {
-            return ++iterator;
+            throw new NotImplementedException();
         }
 
         #endregion

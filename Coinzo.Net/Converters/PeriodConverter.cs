@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Coinzo.Net.Converters
 {
-    internal class PeriodConverter : BaseConverter<CoinzoPeriod>
+    public class PeriodConverter : BaseConverter<CoinzoPeriod>
     {
         public PeriodConverter() : this(true) { }
         public PeriodConverter(bool quotes) : base(quotes) { }

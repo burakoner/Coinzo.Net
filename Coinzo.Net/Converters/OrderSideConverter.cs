@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Coinzo.Net.Converters
 {
-    internal class OrderSideConverter : BaseConverter<CoinzoOrderSide>
+    public class OrderSideConverter : BaseConverter<CoinzoOrderSide>
     {
         public OrderSideConverter() : this(true) { }
         public OrderSideConverter(bool quotes) : base(quotes) { }
