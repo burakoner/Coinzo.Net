@@ -8,10 +8,10 @@
   <PropertyGroup>
     <PackageId>Coinzo.Net</PackageId>
     <Authors>Burak Öner</Authors>
-    <Version>2.0.1</Version>
-    <FileVersion>2.0.1.0</FileVersion>
-    <PackageVersion>2.0.1</PackageVersion>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
+    <Version>2.1.0</Version>
+    <FileVersion>2.1.0.0</FileVersion>
+    <PackageVersion>2.1.0</PackageVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/burakoner/Coinzo.Net</RepositoryUrl>
     <PackageProjectUrl>https://github.com/burakoner/Coinzo.Net</PackageProjectUrl>
@@ -22,8 +22,8 @@
     <Description>Coinzo.Net is a .Net wrapper for the Coinzo API. It includes supports all endpoints</Description>
     <PackageTags>Coinzo Coinzo.Net C# .Net CryptoCurrency Exchange API Wrapper</PackageTags>
     <PackageReleaseNotes>
-      Version 2.0.1 - 02 Feb 2021
-      - Updated CryptoExchange.Net to 3.6.0
+      Version 2.1.0 - 31 Mar 2021
+      - Updated dependencies
     </PackageReleaseNotes>
     <PackageIconUrl />
   </PropertyGroup>
@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CryptoExchange.Net" Version="3.6.0" />
+    <PackageReference Include="CryptoExchange.Net" Version="3.8.0" />
   </ItemGroup>
 
 </Project>
