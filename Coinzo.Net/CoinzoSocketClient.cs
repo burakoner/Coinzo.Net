@@ -63,15 +63,15 @@ namespace Coinzo.Net
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-trades-{pair}";
             SubscriptionChannels.Add(key, string.Empty);
-            var internalHandler = new Action<IEnumerable<object>>(data =>
+            var internalHandler = new Action<DataEvent< IEnumerable<object>>>(data =>
             {
                 if (SubscriptionChannels.ContainsKey(key))
                 {
-                    if (data.Count() > 0 && (string)data.ElementAt(0) == SubscriptionChannels[key])
+                    if (data.Data.Count() > 0 && (string)(data.Data.ElementAt(0)) == SubscriptionChannels[key])
                     {
-                        for (var i = 1; i < data.Count(); i++)
+                        for (var i = 1; i < data.Data.Count(); i++)
                         {
-                            var trade = JsonConvert.DeserializeObject<CoinzoSocketTrade>(data.ElementAt(i).ToString());
+                            var trade = JsonConvert.DeserializeObject<CoinzoSocketTrade>(data.Data.ElementAt(i).ToString());
                             trade.Pair = pair;
                             onData(trade);
                         }
@@ -80,7 +80,7 @@ namespace Coinzo.Net
             });
 
             var request = new CoinzoSocketRequest { Event = "subscribe", Channel = "trades", Pair = pair, SubscriptionKey = key };
-            return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
+            return await SubscribeAsync(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
         public virtual CallResult<UpdateSubscription> SubscribeToTicker(string pair, Action<CoinzoSocketTicker> onData) => SubscribeToTickerAsync(pair, onData).Result;
@@ -89,15 +89,15 @@ namespace Coinzo.Net
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-ticker-{pair}";
             SubscriptionChannels.Add(key, string.Empty);
-            var internalHandler = new Action<IEnumerable<object>>(data =>
+            var internalHandler = new Action<DataEvent<IEnumerable<object>>>(data =>
             {
                 if (SubscriptionChannels.ContainsKey(key))
                 {
-                    if (data.Count() > 0 && (string)data.ElementAt(0) == SubscriptionChannels[key])
+                    if (data.Data.Count() > 0 && (string)(data.Data.ElementAt(0)) == SubscriptionChannels[key])
                     {
-                        for (var i = 1; i < data.Count(); i++)
+                        for (var i = 1; i < data.Data.Count(); i++)
                         {
-                            var ticker = JsonConvert.DeserializeObject<CoinzoSocketTicker>(data.ElementAt(i).ToString());
+                            var ticker = JsonConvert.DeserializeObject<CoinzoSocketTicker>(data.Data.ElementAt(i).ToString());
                             ticker.Pair = pair;
                             ticker.Open = ticker.Close - ticker.Change;
                             onData(ticker);
@@ -107,7 +107,7 @@ namespace Coinzo.Net
             });
 
             var request = new CoinzoSocketRequest { Event = "subscribe", Channel = "ticker", Pair = pair, SubscriptionKey = key };
-            return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
+            return await SubscribeAsync(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
         public virtual CallResult<UpdateSubscription> SubscribeToCandles(string pair, CoinzoPeriod period, Action<CoinzoSocketCandle> onData) => SubscribeToCandlesAsync(pair, period, onData).Result;
@@ -116,15 +116,15 @@ namespace Coinzo.Net
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-candles-{pair}";
             SubscriptionChannels.Add(key, string.Empty);
-            var internalHandler = new Action<IEnumerable<object>>(data =>
+            var internalHandler = new Action<DataEvent<IEnumerable<object>>>(data =>
             {
                 if (SubscriptionChannels.ContainsKey(key))
                 {
-                    if (data.Count() > 0 && (string)data.ElementAt(0) == SubscriptionChannels[key])
+                    if (data.Data.Count() > 0 && (string)(data.Data.ElementAt(0)) == SubscriptionChannels[key])
                     {
-                        for (var i = 1; i < data.Count(); i++)
+                        for (var i = 1; i < data.Data.Count(); i++)
                         {
-                            var candles = JsonConvert.DeserializeObject<IEnumerable<CoinzoSocketCandle>>(data.ElementAt(i).ToString());
+                            var candles = JsonConvert.DeserializeObject<IEnumerable<CoinzoSocketCandle>>(data.Data.ElementAt(i).ToString());
                             foreach (var candle in candles)
                             {
                                 candle.Pair = pair;
@@ -138,7 +138,7 @@ namespace Coinzo.Net
 
             var period_s = JsonConvert.SerializeObject(period, new PeriodConverter(false));
             var request = new CoinzoSocketRequest { Event = "subscribe", Channel = "candles", Pair = pair, Key = period_s, SubscriptionKey = key };
-            return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
+            return await SubscribeAsync(request, null, false, internalHandler).ConfigureAwait(false);
         }
 
         public virtual CallResult<UpdateSubscription> SubscribeToOrderBook(string pair, Action<CoinzoSocketOrderBookTotal> onTotalData, Action<CoinzoSocketOrderBookEntry> onEntryData) => SubscribeToOrderBookAsync(pair, onTotalData, onEntryData).Result;
@@ -147,23 +147,23 @@ namespace Coinzo.Net
             var id = NextSubscriptionId();
             var key = $"{string.Format("{0:0000000000}", id)}-book-{pair}";
             SubscriptionChannels.Add(key, string.Empty);
-            var internalHandler = new Action<IEnumerable<object>>(data =>
+            var internalHandler = new Action<DataEvent<IEnumerable<object>>>(data =>
             {
                 if (SubscriptionChannels.ContainsKey(key))
                 {
-                    if (data.Count() > 0 && (string)data.ElementAt(0) == SubscriptionChannels[key])
+                    if (data.Data.Count() > 0 && (string)(data.Data.ElementAt(0)) == SubscriptionChannels[key])
                     {
-                        for (var i = 1; i < data.Count(); i++)
+                        for (var i = 1; i < data.Data.Count(); i++)
                         {
                             if (i == 1)
                             {
-                                var total = JsonConvert.DeserializeObject<CoinzoSocketOrderBookTotal>(data.ElementAt(i).ToString());
+                                var total = JsonConvert.DeserializeObject<CoinzoSocketOrderBookTotal>(data.Data.ElementAt(i).ToString());
                                 total.Pair = pair;
                                 onTotalData(total);
                             }
                             else
                             {
-                                var entry = JsonConvert.DeserializeObject<CoinzoSocketOrderBookEntry>(data.ElementAt(i).ToString());
+                                var entry = JsonConvert.DeserializeObject<CoinzoSocketOrderBookEntry>(data.Data.ElementAt(i).ToString());
                                 entry.Pair = pair;
                                 onEntryData(entry);
                             }
@@ -173,7 +173,7 @@ namespace Coinzo.Net
             });
 
             var request = new CoinzoSocketRequest { Event = "subscribe", Channel = "book", Pair = pair, Precision = 0, SubscriptionKey = key };
-            return await Subscribe(request, null, false, internalHandler).ConfigureAwait(false);
+            return await SubscribeAsync(request, null, false, internalHandler).ConfigureAwait(false);
         }
         #endregion
 
@@ -266,7 +266,7 @@ namespace Coinzo.Net
             return true;
         }
 
-        protected override SocketConnection GetWebsocket(string address, bool authenticated)
+        protected override SocketConnection GetSocketConnection(string address, bool authenticated)
         {
             return this.CoinzoGetWebsocket(address, authenticated);
         }
@@ -276,11 +276,11 @@ namespace Coinzo.Net
             var socketResult = sockets.Where(s =>
                 s.Value.Socket.Url.TrimEnd('/') == address.TrimEnd('/') &&
                 (s.Value.Authenticated == authenticated || !authenticated) &&
-                s.Value.Connected).OrderBy(s => s.Value.HandlerCount).FirstOrDefault();
+                s.Value.Connected).OrderBy(s => s.Value.SubscriptionCount).FirstOrDefault();
             var result = socketResult.Equals(default(KeyValuePair<int, SocketConnection>)) ? null : socketResult.Value;
             if (result != null)
             {
-                if (result.HandlerCount < SocketCombineTarget || (sockets.Count >= MaxSocketConnections && sockets.All(s => s.Value.HandlerCount >= SocketCombineTarget)))
+                if (result.SubscriptionCount < SocketCombineTarget || (sockets.Count >= MaxSocketConnections && sockets.All(s => s.Value.SubscriptionCount >= SocketCombineTarget)))
                 {
                     // Use existing socket if it has less than target connections OR it has the least connections and we can't make new
                     return result;
@@ -289,17 +289,18 @@ namespace Coinzo.Net
 
             // Create new socket
             var socket = CreateSocket(address);
-            var socketWrapper = new SocketConnection(this, socket);
+            var socketConnection = new SocketConnection(this, socket);
+            socketConnection.UnhandledMessage += HandleUnhandledMessage;
             foreach (var kvp in genericHandlers)
             {
-                var handler = SocketSubscription.CreateForIdentifier(kvp.Key, false, kvp.Value);
-                socketWrapper.AddHandler(handler);
+                var handler = SocketSubscription.CreateForIdentifier(NextId(), kvp.Key, false, kvp.Value);
+                socketConnection.AddSubscription(handler);
             }
 
-            return socketWrapper;
+            return socketConnection;
         }
 
-        protected override async Task<bool> Unsubscribe(SocketConnection connection, SocketSubscription s)
+        protected override async Task<bool> UnsubscribeAsync(SocketConnection connection, SocketSubscription s)
         {
             return await this.CoinzoUnsubscribe(connection, s);
         }
@@ -310,7 +311,7 @@ namespace Coinzo.Net
 
             var channelId = ((CoinzoSocketRequest)s.Request).SubscriptionKey;
             var request = new CoinzoSocketRequest { Event = "unsubscribe", ChannelId = channelId };
-            await connection.SendAndWait(request, ResponseTimeout, data =>
+            await connection.SendAndWaitAsync(request, ResponseTimeout, data =>
             {
                 if (data.Type != JTokenType.Object)
                     return false;
@@ -328,7 +329,7 @@ namespace Coinzo.Net
             return false;
         }
 
-        protected override Task<CallResult<bool>> AuthenticateSocket(SocketConnection s)
+        protected override Task<CallResult<bool>> AuthenticateSocketAsync(SocketConnection s)
         {
             return this.CoinzoAuthenticateSocket(s);
         }

@@ -104,7 +104,7 @@ namespace Coinzo.Net
             {
                 { "pair", pair },
             };
-            return await SendRequest<CoinzoTicker>(GetUrl(Endpoints_Public_Ticker), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoTicker>(GetUrl(Endpoints_Public_Ticker), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Coinzo.Net
             {
                 { "pair", pair },
             };
-            return await SendRequest<CoinzoOrderBook>(GetUrl(Endpoints_Public_OrderBook), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoOrderBook>(GetUrl(Endpoints_Public_OrderBook), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Coinzo.Net
             {
                 { "pair", pair },
             };
-            return await SendRequest<IEnumerable<CoinzoTrade>>(GetUrl(Endpoints_Public_Trades), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoTrade>>(GetUrl(Endpoints_Public_Trades), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: false, parameters: parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<CoinzoUsage>> GetUsageAsync(CancellationToken ct = default)
         {
-            return await SendRequest<CoinzoUsage>(GetUrl(Endpoints_Private_Usage), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoUsage>(GetUrl(Endpoints_Private_Usage), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<IEnumerable<CoinzoBalance>>> GetBalancesAsync(CancellationToken ct = default)
         {
-            return await SendRequest<IEnumerable<CoinzoBalance>>(GetUrl(Endpoints_Private_Balances), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoBalance>>(GetUrl(Endpoints_Private_Balances), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Coinzo.Net
             parameters.AddOptionalParameter("limitPrice", limitPrice?.ToString(CultureInfo.InvariantCulture));
             parameters.AddOptionalParameter("stopPrice", stopPrice?.ToString(CultureInfo.InvariantCulture));
 
-            return await SendRequest<CoinzoOrderId>(GetUrl(Endpoints_Private_PlaceOrder), method: HttpMethod.Post, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoOrderId>(GetUrl(Endpoints_Private_PlaceOrder), method: HttpMethod.Post, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Coinzo.Net
             {
                 { "id", id },
             };
-            return await SendRequest<CoinzoOrder>(GetUrl(Endpoints_Private_OrderStatus), method: HttpMethod.Get, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoOrder>(GetUrl(Endpoints_Private_OrderStatus), method: HttpMethod.Get, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Coinzo.Net
             {
                 { "id", id },
             };
-            return await SendRequest<CoinzoOrderId>(GetUrl(Endpoints_Private_CancelOrder), method: HttpMethod.Delete, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoOrderId>(GetUrl(Endpoints_Private_CancelOrder), method: HttpMethod.Delete, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<CoinzoOrderId>> CancelAllOrdersAsync(CancellationToken ct = default)
         {
-            return await SendRequest<CoinzoOrderId>(GetUrl(Endpoints_Private_CancelAllOrders), method: HttpMethod.Delete, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoOrderId>(GetUrl(Endpoints_Private_CancelAllOrders), method: HttpMethod.Delete, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<IEnumerable<CoinzoOrder>>> GetOrdersAsync(CancellationToken ct = default)
         {
-            return await SendRequest<IEnumerable<CoinzoOrder>>(GetUrl(Endpoints_Private_ListOrders), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoOrder>>(GetUrl(Endpoints_Private_ListOrders), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<IEnumerable<CoinzoFill>>> GetFillsAsync(CancellationToken ct = default)
         {
-            return await SendRequest<IEnumerable<CoinzoFill>>(GetUrl(Endpoints_Private_Fills), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoFill>>(GetUrl(Endpoints_Private_Fills), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace Coinzo.Net
             {
                 { "asset", asset },
             };
-            return await SendRequest<CoinzoDepositAddress>(GetUrl(Endpoints_Private_DepositAddress), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true, parameters: parameters).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoDepositAddress>(GetUrl(Endpoints_Private_DepositAddress), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true, parameters: parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<IEnumerable<CoinzoDeposit>>> GetDepositHistoryAsync(CancellationToken ct = default)
         {
-            return await SendRequest<IEnumerable<CoinzoDeposit>>(GetUrl(Endpoints_Private_DepositList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoDeposit>>(GetUrl(Endpoints_Private_DepositList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace Coinzo.Net
             parameters.AddOptionalParameter("tag", tag);
             parameters.AddOptionalParameter("memo", memo);
 
-            return await SendRequest<CoinzoWithdraw>(GetUrl(Endpoints_Private_Withdraw), method: HttpMethod.Post, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<CoinzoWithdraw>(GetUrl(Endpoints_Private_Withdraw), method: HttpMethod.Post, cancellationToken: ct, parameters: parameters, checkResult: false, signed: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace Coinzo.Net
         /// <returns></returns>
         public virtual async Task<WebCallResult<IEnumerable<CoinzoWithdrawal>>> GetWithdrawHistoryAsync(CancellationToken ct = default)
         {
-            return await SendRequest<IEnumerable<CoinzoWithdrawal>>(GetUrl(Endpoints_Private_WithdrawList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<CoinzoWithdrawal>>(GetUrl(Endpoints_Private_WithdrawList), method: HttpMethod.Get, cancellationToken: ct, checkResult: false, signed: true).ConfigureAwait(false);
         }
         #endregion
 
